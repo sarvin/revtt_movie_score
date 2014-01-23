@@ -42,7 +42,7 @@ function requestRottenTomatoesMovieRating(movieInfo, event) {
 	$.getJSON(
 		'http://api.rottentomatoes.com/api/public/v1.0/movies.json',
 		{
-			apikey: 'jnx7tzztf8mhgvhrw7bmc7uy',
+			apikey: 'your_api_key',
 			//q: rottenTomatoesMovieTitle
 			q: movieInfo.title
 		},
