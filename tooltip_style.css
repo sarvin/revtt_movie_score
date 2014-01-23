@@ -1,0 +1,42 @@
+.rotten_tomatoes_container {
+	position: relative;
+}
+
+.rotten_tomatoes_tooltip {
+	position: absolute;
+	bottom: 10px;
+	display: none;
+}
+
+.rotten_tomatoes_container:hover .rotten_tomatoes_tooltip{
+	display: block;
+}
+
+.tMeterIcon.tiny {
+	display: inline-block;
+	width: 53px;
+	margin-left: 5px;
+}
+
+.icon {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	vertical-align: text-bottom;
+	background: transparent url('images/rotten_tomatoes.png') no-repeat -312px -160px;
+}
+
+.tiny.rotten {
+	background-position:-272px -142px;
+}
+
+.tiny.fresh {
+	background-position:-256px -142px;
+}
+
+.tMeterScore {
+	display: inline-block;
+	width: 31px;
+	text-align: center;
+	font-weight: bold;
+}
