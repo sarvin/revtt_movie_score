@@ -42,7 +42,7 @@ function requestRottenTomatoesMovieRating(movieInfo, event) {
 	$.getJSON(
 		'http://api.rottentomatoes.com/api/public/v1.0/movies.json',
 		{
-			apikey: 'your_api_key',
+			apikey: 'XXXXXXXX',
 			//q: rottenTomatoesMovieTitle
 			q: movieInfo.title
 		},
@@ -189,9 +189,23 @@ function respondToMessage(messageEvent) {
 			movie.original_title = originalMovieText;
 			messageEvent.target.page.dispatchMessage("returnMovieScore", movie);
 		} else if (movie === undefined) {
+			//queueMovieRequest(movieInfo, messageEvent);
 			requestRottenTomatoesMovieRating(movieInfo, messageEvent);
 		}
 	}
+}
+
+var requestQueue = [];
+function queueMovieRequest(movieInfo, messageEvent) {
+	requestQueue.push({
+		movieInfo:movieInfo,
+		messageEvent:messageEvent
+	});
+
+	setInterval(
+		requestRottenTomatoesMovieRating(movieInfo, event),
+		15000
+	);
 }
 
 safari.application.addEventListener("message",respondToMessage,false);

@@ -13,8 +13,8 @@ function respondToMessage(messageEvent) {
 		var domNode = getDomNodeByMovie(movieInfo);
 
 		if (domNode) {
-			var rottenTomatoesNode = createMovieSpan(movieInfo);
-			//var rottenTomatoesNode = createMovieDiv(movieInfo);
+			//var rottenTomatoesNode = createMovieSpan(movieInfo);
+			var rottenTomatoesNode = createMovieSpanPopup(movieInfo);
 			attachMovieSpanToDOM(rottenTomatoesNode, domNode);
 		}
 	}
@@ -23,7 +23,7 @@ function respondToMessage(messageEvent) {
 /** 
  * Create a span tag that we can later assign to movie DOM nodes
  * */
-function createMovieSpan(movieInfo) {
+function createMovieSpanPopup(movieInfo) {
 	var criticRating = document.createElement('span');
 	criticRating.className = 'tMeterScore';
 
@@ -54,28 +54,56 @@ function createMovieSpan(movieInfo) {
 	alternateLink.appendChild(criticRating);
 	alternateLink.innerHTML = '(' + alternateLink.innerHTML + ')';
 
+	var tooltipSpan = document.createElement('span');
+	tooltipSpan.className = 'tooltipinfo';
+
+	var callout = document.createElement('img');
+	callout.className = 'callout';
+	callout.src = safari.extension.baseURI + 'images/callout.gif';
+
+	var thumbnail = document.createElement('img');
+	thumbnail.className = 'thumbnail';
+	thumbnail.src = movieInfo.posters.thumbnail;
+
+	var left = document.createElement('div');
+	left.className = 'ttleft';
+	left.appendChild(thumbnail);
+
+	var right = document.createElement('div');
+	right.className = 'ttright';
+	right.innerHTML = 
+		movieInfo.title + '<br />' +
+		movieInfo.year + '<br />' +
+		movieInfo.runtime + '<br />';
+
+	var clearDiv = document.createElement('div');
+	clearDiv.className = 'clear';
+
+	var synopsis = document.createElement('div');
+	synopsis.className = 'ttwide';
+	synopsis.innerHTML = movieInfo.synopsis;
+
+	var popupContainer = document.createElement('div');
+	popupContainer.className = 'ttcontainer';
+	popupContainer.appendChild(left);
+	popupContainer.appendChild(right);
+	popupContainer.appendChild(clearDiv);
+	popupContainer.appendChild(synopsis);
+
+	tooltipSpan.appendChild(callout);
+	tooltipSpan.appendChild(popupContainer);
+
 	var span = document.createElement('span');
 	span.className = 'tMeterIcon tiny';
-	//span.appendChild(criticRatingIcon);
-	//span.appendChild(criticRating);
-	//span.innerHTML = '(' + span.innerHTML + ')';
 	span.appendChild(alternateLink);
+	span.appendChild(tooltipSpan);
 
-	return span;
-}
+	var a = document.createElement('a');
+	a.className = 'tooltip';
+	a.href = '#';
+	a.appendChild(span);
 
-function createMovieDiv(movieInfo) {
-	var text = '<div class="rotten_tomatoes_tooltip">'+
-		'<a href="'+ movieInfo.links.alternate + '" target="_blank">' +
-		movieInfo.ratings.critics_score + '%'+
-		'</a>'+
-		'</div>';
-
-	var div = document.createElement('div');
-	div.className = 'rotten_tomatoes_container';
-	div.innerHTML = text;
-
-	return div;
+	return a;
 }
 
 /** 
