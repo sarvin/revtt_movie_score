@@ -174,6 +174,24 @@ function setLocalStorageMovie(movie) {
 	key = key.replace(/\s\s+/g, ' ');
 
 	localStorage.setItem(key, dbMovieString);
+	try {
+		localStorage.setItem(key, dbMovieString);
+	} catch (e) {
+		if (e == QUOTA_EXCEEDED_ERR) {
+			localStorage.clear();
+		}
+
+		/*
+		var numKeys = localStorage.length;
+
+		for(i=0;i<numKeys;i++) {
+			// get key name into an array
+			keyNames[i]=localStorage.key(i);
+			// use key name to retreive value and store in array
+			values[i]=localStorage.getItem(keyNames[i]);
+		}
+		*/
+	}
 
 	return;
 }
