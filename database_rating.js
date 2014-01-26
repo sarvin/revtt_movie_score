@@ -1,5 +1,8 @@
 var databaseRating = (function () {
 
+	var databaseType = 'keyValue';
+	//var databaseType = 'SQLight';
+
 	var databaseConnection; 
 
 	var createDatabase = function() {
@@ -80,12 +83,14 @@ var databaseRating = (function () {
 		);
 	};
 
-	createDatabase();
-	createTables(databaseConnection);
+	if (databaseType === 'SQLight') {
+		createDatabase();
+		createTables(databaseConnection);
+	}
 
 	return {
 		// A public variable
-		myPublicVar: "foo",
+		//myPublicVar: "foo",
 
 		insertRating: function(movie) {
 			var timestamp = new Date().getTime();
