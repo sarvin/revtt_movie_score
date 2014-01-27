@@ -42,7 +42,7 @@ function requestRottenTomatoesMovieRating(movieInfo, event) {
 	$.getJSON(
 		'http://api.rottentomatoes.com/api/public/v1.0/movies.json',
 		{
-			apikey: 'your api key',
+			apikey: 'jnx7tzztf8mhgvhrw7bmc7uy',
 			//q: rottenTomatoesMovieTitle
 			q: movieInfo.title
 		},
@@ -50,7 +50,7 @@ function requestRottenTomatoesMovieRating(movieInfo, event) {
 			var movie = parseRottenTomatoesResponse(rottenTomatoesData, movieInfo);
 
 			if (movie) {
-				setLocalStorageMovie(movie);
+				storage.setRating(movie);
 
 				movie.original_title = movieInfo.original_title;
 				event.target.page.dispatchMessage("returnMovieScore", movie);
@@ -59,7 +59,7 @@ function requestRottenTomatoesMovieRating(movieInfo, event) {
 					title: movieInfo.title
 				};
 
-				setLocalStorageMovie(movie);
+				storage.setRating(movie);
 			}
 	});
 }
@@ -202,13 +202,12 @@ function respondToMessage(messageEvent) {
 		//var movieInfo = messageEvent.message;
 		var movieInfo = parseMovieText(originalMovieText);
 
-		var movie = getLocalStorageMovie(movieInfo);
+		var movie = storage.getRating(movieInfo);
 		if (movie && movie.id) {
 			movie.original_title = originalMovieText;
 			messageEvent.target.page.dispatchMessage("returnMovieScore", movie);
 		} else if (movie === undefined) {
 			queueMovieRequest(movieInfo, messageEvent);
-			//requestRottenTomatoesMovieRating(movieInfo, messageEvent);
 		}
 	}
 }
