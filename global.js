@@ -64,7 +64,6 @@ function requestRottenTomatoesMovieRating(movieInfo, event) {
 	});
 }
 
-
 function parseRottenTomatoesResponse(rottenTomatoesMovieData, movieInfo) {
 	possibleMovies = rottenTomatoesMovieData.movies;
 
@@ -97,7 +96,11 @@ function parseMovieText(original_title) {
 	text = text.replace(/BRRip/gi,"");
 	text = text.replace(/XvidHD/gi,"");
 	text = text.replace(/720p-NPW/gi,"");
-	text = text.replace(/[^\w]unrated[^\w]/gi,"");
+	text = text.replace(/720p/gi,"");
+	text = text.replace(/DVDRiP/gi,"");
+	text = text.replace(/x264/gi,"");
+	text = text.replace(/XviD/gi,"");
+	text = text.replace(/BluRay/gi,"");
 
 	var whiteSpacePattern = / /;
 	var dotPattern = /\./;
@@ -144,56 +147,6 @@ function parseMovieText(original_title) {
 	}
 
 	return movieInfo;
-}
-
-function getLocalStorageMovie(movieInfo) {
-	var movie;
-
-	if (movieInfo.title) {
-		var key = movieInfo.title.toLowerCase().replace(/[^\w\s]/gi, '');
-		key = key.replace(/\s\s+/g, ' ');
-
-		var dbMovieString = localStorage.getItem(key);
-
-		//databaseRating.getRating(movieInfo, function () { });
-
-		if (dbMovieString) {
-			movie = JSON.parse(dbMovieString)
-		}
-	}
-
-	return movie;
-}
-
-function setLocalStorageMovie(movie) {
-	//databaseRating.insertRating(movie);
-
-	var dbMovieString = JSON.stringify(movie);
-
-	var key = movie.title.toLowerCase().replace(/[^\w\s]/gi, '')
-	key = key.replace(/\s\s+/g, ' ');
-
-	localStorage.setItem(key, dbMovieString);
-	try {
-		localStorage.setItem(key, dbMovieString);
-	} catch (e) {
-		if (e == QUOTA_EXCEEDED_ERR) {
-			localStorage.clear();
-		}
-
-		/*
-		var numKeys = localStorage.length;
-
-		for(i=0;i<numKeys;i++) {
-			// get key name into an array
-			keyNames[i]=localStorage.key(i);
-			// use key name to retreive value and store in array
-			values[i]=localStorage.getItem(keyNames[i]);
-		}
-		*/
-	}
-
-	return;
 }
 
 function respondToMessage(messageEvent) {
