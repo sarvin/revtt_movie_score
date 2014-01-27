@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Author</key>
+	<string>kettle</string>
 	<key>Builder Version</key>
 	<string>8537.73.11</string>
 	<key>CFBundleDisplayName</key>
-	<string>rotten_tomatoes</string>
+	<string>RevTT Movie Scores</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.yourcompany.rottentomatoes</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -53,5 +55,7 @@
 			<string>All</string>
 		</dict>
 	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://ckettle.com/safari_extension/update_manifest.plist</string>
 </dict>
 </plist>
