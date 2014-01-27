@@ -125,6 +125,8 @@ var storage = (function () {
 	};
 
 	var setLocalStorageRating = function (movie) {
+		movie['insertion_date'] = (new Date).getTime();
+
 		var dbMovieString = JSON.stringify(movie);
 
 		var key = movie.title.toLowerCase().replace(/[^\w\s]/gi, '')
@@ -162,8 +164,6 @@ var storage = (function () {
 			key = key.replace(/\s\s+/g, ' ');
 
 			var dbMovieString = localStorage.getItem(key);
-
-			//databaseRating.getRating(movieInfo, function () { });
 
 			if (dbMovieString) {
 				movie = JSON.parse(dbMovieString)
