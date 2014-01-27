@@ -1,7 +1,7 @@
-var databaseRating = (function () {
+var storage = (function () {
 
-	var databaseType = 'keyValue';
-	//var databaseType = 'SQLight';
+	var databaseType = 'keyvalue';
+	//var databaseType = 'sqlight';
 
 	var databaseConnection; 
 
@@ -83,7 +83,97 @@ var databaseRating = (function () {
 		);
 	};
 
-	if (databaseType === 'SQLight') {
+	var setSqlightRating = function (movie) {
+		var timestamp = new Date().getTime();
+
+		databaseConnection.transaction(
+			function (transaction) {
+				transaction.executeSql('insert into rating (timestamp, imdb_id, synopsis, service_id, service_name, service_link, media_type, audience_rating, critics_rating, critics_rating_description, runtime, year, title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+				[
+					timestamp,
+					movie.alternate_ids.imdb,
+					movie.synopsis,
+					movie.id,
+					'rottentomatoes',
+					movie.links.alternate,
+					'movie',
+					movie.ratings.audience_score,
+					movie.ratings.critics_score,
+					movie.ratings.critics_rating,
+					movie.runtime,
+					movie.year,
+					movie.title
+					],nullDataHandler,errorHandler);
+			}
+		);
+	};
+
+	var getSqlightRating = function(movieInfo, externalResponseHandle) {
+		databaseConnection.transaction(
+			function (transaction) {
+				transaction.executeSql(
+					"SELECT * from rating where title = ? AND year = ?;",
+					[movieInfo.title, movieInfo.year ],
+					function(transaction, results) {
+						var movie = movieObject(results);
+						externalResponseHandle(movie, movieInfo);
+					},
+					errorHandler
+				);
+			}
+		);
+	};
+
+	var setLocalStorageRating = function (movie) {
+		var dbMovieString = JSON.stringify(movie);
+
+		var key = movie.title.toLowerCase().replace(/[^\w\s]/gi, '')
+		key = key.replace(/\s\s+/g, ' ');
+
+		try {
+			localStorage.setItem(key, dbMovieString);
+		} catch (exception) {
+			if (exception == QUOTA_EXCEEDED_ERR) {
+				localStorage.clear();
+			}
+
+			/*
+			//eventually move to checking insertion epoch
+			//and removing x oldest ratings
+			var numKeys = localStorage.length;
+
+			for(i=0;i<numKeys;i++) {
+				// get key name into an array
+				keyNames[i]=localStorage.key(i);
+				// use key name to retreive value and store in array
+				values[i]=localStorage.getItem(keyNames[i]);
+			}
+			*/
+		}
+
+		return;
+	};
+
+	var getLocalStorageRating = function (movieInfo) {
+		var movie;
+
+		if (movieInfo.title) {
+			var key = movieInfo.title.toLowerCase().replace(/[^\w\s]/gi, '');
+			key = key.replace(/\s\s+/g, ' ');
+
+			var dbMovieString = localStorage.getItem(key);
+
+			//databaseRating.getRating(movieInfo, function () { });
+
+			if (dbMovieString) {
+				movie = JSON.parse(dbMovieString)
+			}
+		}
+
+		return movie;
+	};
+
+	if (databaseType === 'sqlight') {
 		createDatabase();
 		createTables(databaseConnection);
 	}
@@ -92,29 +182,11 @@ var databaseRating = (function () {
 		// A public variable
 		//myPublicVar: "foo",
 
-		insertRating: function(movie) {
-			var timestamp = new Date().getTime();
-
-			databaseConnection.transaction(
-				function (transaction) {
-					transaction.executeSql('insert into rating (timestamp, imdb_id, synopsis, service_id, service_name, service_link, media_type, audience_rating, critics_rating, critics_rating_description, runtime, year, title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
-					[
-						timestamp,
-						movie.alternate_ids.imdb,
-						movie.synopsis,
-						movie.id,
-						'rottentomatoes',
-						movie.links.alternate,
-						'movie',
-						movie.ratings.audience_score,
-						movie.ratings.critics_score,
-						movie.ratings.critics_rating,
-						movie.runtime,
-						movie.year,
-						movie.title
-					 ],nullDataHandler,errorHandler);
-				}
-			);
+		setRating: function(movie) {
+			if (databaseType === 'keyvalue') {
+				setLocalStorageRating(movie);
+			} else if (databaseType === 'sqlight') {
+			}
 		},
 
 		dropping: function() {
@@ -122,20 +194,12 @@ var databaseRating = (function () {
 		},
 
 		getRating: function(movieInfo, externalResponseHandle) {
+			if (databaseType === 'keyvalue') {
+				var rating = getLocalStorageRating(movieInfo);
+			} else if (databaseType === 'sqlight') {
+			}
 
-			databaseConnection.transaction(
-				function (transaction) {
-					transaction.executeSql(
-						"SELECT * from rating where title = ? AND year = ?;",
-						[movieInfo.title, movieInfo.year ],
-						function(transaction, results) {
-							var movie = movieObject(results);
-							externalResponseHandle(movie, movieInfo);
-						},
-						errorHandler
-					);
-				}
-			);
+			return rating;
 		}
 	};
 })();
